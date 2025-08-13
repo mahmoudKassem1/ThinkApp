@@ -7,7 +7,8 @@
     "server": "nodemon backend/src/server.js",
     "client": "npm start --prefix frontend",
     "client:build": "npm run build --prefix frontend",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm install --prefix frontend && npm run build --prefix frontend"
   },
   "devDependencies": {
     "concurrently": "^9.2.0",

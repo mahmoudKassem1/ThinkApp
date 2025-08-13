@@ -7,8 +7,15 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 
-dotenv.config(); // Load .env variables
-connectDB(); // Connect to MongoDB
+// Resolve current directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env from the root folder
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+
+// Connect to MongoDB
+connectDB();
 
 const app = express();
 
@@ -26,9 +33,6 @@ app.use("/api/users", userRoutes);
 app.use("/api/notes", notesRoutes);
 
 // Deployment setup
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 if (process.env.NODE_ENV === "production") {
   const frontendPath = path.join(__dirname, "../../frontend/dist");
   app.use(express.static(frontendPath));
@@ -41,7 +45,6 @@ if (process.env.NODE_ENV === "production") {
     res.send("API is running...");
   });
 }
-
 
 // Start server
 const PORT = process.env.PORT || 5000;

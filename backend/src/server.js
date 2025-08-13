@@ -11,8 +11,8 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load .env from the root folder
-dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+// Load environment variables (only needed for local dev)
+dotenv.config();
 
 // Connect to MongoDB
 connectDB();
@@ -23,7 +23,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: process.env.CLIENT_URL || "*",
     credentials: true,
   })
 );
@@ -34,12 +34,13 @@ app.use("/api/notes", notesRoutes);
 
 // Deployment setup
 if (process.env.NODE_ENV === "production") {
-  const frontendPath = path.join(__dirname, "../../frontend/dist");
+  // Serve frontend build
+  const frontendPath = path.join(__dirname, "/frontend/dist");
   app.use(express.static(frontendPath));
 
-  app.get("*", (req, res) =>
-    res.sendFile(path.resolve(frontendPath, "index.html"))
-  );
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(frontendPath, "index.html"));
+  });
 } else {
   app.get("/", (req, res) => {
     res.send("API is running...");
